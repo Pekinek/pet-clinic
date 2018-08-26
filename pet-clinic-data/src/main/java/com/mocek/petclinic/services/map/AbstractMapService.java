@@ -1,15 +1,13 @@
 package com.mocek.petclinic.services.map;
 
+import com.mocek.petclinic.model.BaseEntity;
 import com.mocek.petclinic.services.CrudService;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public abstract class AbstractMapService<T, ID> implements CrudService<T, ID> {
+public abstract class AbstractMapService<T extends BaseEntity, ID extends Long> implements CrudService<T, ID> {
 
-    protected Map<ID, T> map = new HashMap<>();
+    protected Map<Long, T> map = new HashMap<>();
 
     public Set<T> findAll() {
         return new HashSet<>(map.values());
@@ -19,9 +17,19 @@ public abstract class AbstractMapService<T, ID> implements CrudService<T, ID> {
         return map.get(id);
     }
 
-    T save(ID id, T object) {
-        map.put(id, object);
+    public T save(T object) {
+        if (object != null) {
+            if (object.getId() == null) {
+                object.setId(getNextId());
+            }
+            map.put(object.getId(), object);
+        }
         return object;
+    }
+
+    private Long getNextId() {
+        if (map.keySet().isEmpty()) return 1L;
+        return Collections.max(map.keySet()) + 1;
     }
 
     public void deleteById(ID id) {
