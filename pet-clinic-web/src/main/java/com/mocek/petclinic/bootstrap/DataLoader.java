@@ -1,8 +1,10 @@
 package com.mocek.petclinic.bootstrap;
 
 import com.mocek.petclinic.model.Owner;
+import com.mocek.petclinic.model.PetType;
 import com.mocek.petclinic.model.Vet;
 import com.mocek.petclinic.services.OwnerService;
+import com.mocek.petclinic.services.PetTypeService;
 import com.mocek.petclinic.services.VetService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -14,13 +16,24 @@ public class DataLoader implements CommandLineRunner {
 
     private final VetService vetService;
 
-    public DataLoader(OwnerService ownerService, VetService vetService) {
+    private final PetTypeService petTypeService;
+
+    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService) {
         this.ownerService = ownerService;
         this.vetService = vetService;
+        this.petTypeService = petTypeService;
     }
 
     @Override
     public void run(String... args) {
+        var dog = new PetType();
+        dog.setName("dog");
+        var savedDogType = petTypeService.save(dog);
+
+        var cat = new PetType();
+        cat.setName("cat");
+        var savedCatType = petTypeService.save(cat);
+
         Owner owner1 = new Owner();
         owner1.setFirstName("Michael");
         owner1.setLastName("Weston");
